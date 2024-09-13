@@ -21,11 +21,11 @@
 title:
 name: Alistair Carson
 email: acarson2@ed.ac.uk
-description: Accompanying webpage for the DAFx24 submission.
+description: Accompanying webpage for the ICASSP25 submission.
 baseurl: /sr_indie_rnn # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
 github_username:  a-carson
-repository: "a-carson/sr_indie_rnn"
+repository: "a-carson/icassp25_srirnns"
 # Build settings
 remote_theme: "mmistakes/minimal-mistakes@4.24.0"
 #theme: minimal-mistakes-jekyll
