@@ -36,7 +36,7 @@ classes:
 <p style="font-size: 0.75em" align="center">
 Alistair Carson, Alec Wright and Stefan Bilbao
 </p>
-<p style="font-size: 0.75em" align="center"><i>Acoustics and Audio Group, University of Edinburgh</i></p>
+<p style="font-size: 0.75em" align="center"><i>Acoustics and Audio Group, University of Edinburgh, Edinburgh, UK</i></p>
 
 <p style="font-size: 0.75em" align="center">
 Welcome to the accompanying web-page for our ICASSP25 submission.</p>
@@ -64,7 +64,7 @@ The top row shows the magnitude response in dB and the bottom row shows phase de
         <figcaption>a) Oversampling 44.1kHz -> 48kHz </figcaption>
     </figure>
     <figure>
-        <img src="img/kernels_up.png" alt="Image 2 description">
+        <img src="img/kernels_down.png" alt="Image 2 description">
         <figcaption >b) Undersampling 44.1kHz -> 40.5kHz</figcaption>
     </figure>
 </div>
