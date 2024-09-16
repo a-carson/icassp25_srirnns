@@ -80,7 +80,7 @@ target="_blank" rel="noopener noreferrer"> Click here to download all models </a
 🎧 Headphones recommended to hear the differences 🎧
 <br>
 <br>
-WARNING: but KEEP VOLUME LOW (some clips contain high frequency ringing artefacts).
+❗ WARNING: KEEP VOLUME LOW (some clips contain high frequency ringing artefacts) ❗
 </p>
 
 ###### 1) Blackstar HT40 tube amp -- high gain
