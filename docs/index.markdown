@@ -36,17 +36,13 @@ classes:
 <p style="font-size: 1.0em" align="center">
 Alistair Carson, Alec Wright and Stefan Bilbao
 </p>
-<p style="font-size: 1.0em" align="center">
-<i>Acoustics and Audio Group, University of Edinburgh, Edinburgh, UK</i>
+<p style="font-size: 0.75em" align="center">
+<i><a href="https://www.acoustics.ed.ac.uk/" target="_blank" rel="noopener noreferrer">Acoustics and Audio Group</a><br>University of Edinburgh</i> <br>Edinburgh, UK
 </p>
-<p style="font-size: 0.75em">
-Welcome to the accompanying web-page for our ICASSP25 submission. Contents: </p>
+<p style="font-size: 1.0em; text-align: center">
+Welcome to the accompanying web-page for our ICASSP '25 submission.</p>
 <p style="font-size: 0.75em" align="center">
 </p>
-
-- [Abstract](#abstract)
-- [Filter Designs](#filter-designs)
-- [Audio Examples](#audio-examples)<br>
 
 
 ##### Abstract
