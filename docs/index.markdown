@@ -32,14 +32,15 @@ classes:
         }
 </style>
 
-<h2 align="center">Interpolation filter design for sample rate independent audio effect RNNs</h2>
-<p style="font-size: 0.75em" align="center">
+<h2 style="font-size: 1.5em" align="center">Interpolation filter design for sample rate independent audio effect RNNs</h2>
+<p style="font-size: 1.0em" align="center">
 Alistair Carson, Alec Wright and Stefan Bilbao
 </p>
-<p style="font-size: 0.75em" align="center"><i>Acoustics and Audio Group, University of Edinburgh, Edinburgh, UK</i></p>
-
-<p style="font-size: 0.75em" align="center">
-Welcome to the accompanying web-page for our ICASSP25 submission.</p>
+<p style="font-size: 1.0em" align="center">
+<i>Acoustics and Audio Group, University of Edinburgh, Edinburgh, UK</i>
+</p>
+<p style="font-size: 0.75em">
+Welcome to the accompanying web-page for our ICASSP25 submission. Contents: </p>
 <p style="font-size: 0.75em" align="center">
 </p>
 
