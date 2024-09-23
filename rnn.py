@@ -7,7 +7,14 @@ from flax.linen.module import compact, nowrap
 from flax.typing import Array, PRNGKey
 from dataclasses import field
 
+'''
+Base audio RNN class used for all experiments
 
+A. Wright, E.-P. Damskagg, L. Juvela, and V. Valimaki, “Real-time
+guitar amplifier emulation with deep learning,” Appl. Sci., vol. 10, no. 2,
+2020
+https://www.mdpi.com/2076-3417/10/3/766
+'''
 class AudioRNN(nn.Module):
     hidden_size: int
     cell_type: type(nn.RNNCellBase)
@@ -31,6 +38,9 @@ class AudioRNN(nn.Module):
     def initialise_carry(self, input_shape):
         return self.cell_type(self.hidden_size, parent=None, dtype=self.dtype, param_dtype=self.dtype, **self.cell_args).initialize_carry(jax.random.key(0), input_shape)
 
+'''
+LSTM cell with FIR interpolation / extrapolation in feedback loop (proposed method)
+'''
 class FIRInterpLSTMCell(nn.LSTMCell):
     kernel: Array = None
 
@@ -56,6 +66,19 @@ class FIRInterpLSTMCell(nn.LSTMCell):
         h = self.carry_init(key2, mem_shape, self.param_dtype)
         return (c, h)
 
+'''
+LSTM cell with state trajectory network (STN) method of sample rate adjustment:
+
+J. Parker, F. Esqueda, and A. Bergner, “Modelling of nonlinear
+state-space systems using a deep neural network,” in Proc. 22nd Int.
+Conf. Digital Audio Effects, Birmingham, UK, Sept. 2019
+
+https://www.dafx.de/paper-archive/2019/DAFx2019_paper_42.pdf
+
+More info:
+https://arxiv.org/abs/2406.06293
+
+'''
 class STNLSTMCell(nn.LSTMCell):
     kernel: Array = None
 
@@ -84,6 +107,9 @@ class STNLSTMCell(nn.LSTMCell):
         h = self.carry_init(key2, mem_shape, self.param_dtype)
         return (c, h)
 
+'''
+LSTM cell which concatenates hidden and cell states together as the output
+'''
 class LSTMCellOneState(nn.LSTMCell):
     @compact
     def __call__(self, carry, inputs):

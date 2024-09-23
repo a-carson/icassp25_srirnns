@@ -11,6 +11,11 @@ import json
 import os
 
 def model_info_from_json(filename: str) -> Tuple[Dict, Dict]:
+    '''
+    Get info and state dict from Proteus Tone Library model
+    :param filename: .json file
+    :return: hyper_data, state_dict
+    '''
     with open(filename, 'r') as f:
         json_data = json.load(f)
 
@@ -21,6 +26,11 @@ def model_info_from_json(filename: str) -> Tuple[Dict, Dict]:
     return hyper_data, state_dict
 
 def audio_LSTM_params_from_state_dict(state_dict: Dict) -> Dict:
+    '''
+    Converts Proteus Tone Library .json files to flax parameter Dict
+    :param state_dict: Proteus format parameters
+    :return: flax format parameters
+    '''
 
     for key, value in state_dict.items():
         state_dict[key] = jnp.asarray(value)
@@ -46,7 +56,15 @@ def audio_LSTM_params_from_state_dict(state_dict: Dict) -> Dict:
     return {'rec': {'cell': lstm_params},
             'linear': linear_params}
 
-def lagrange_interp_kernel(order: int, delta: float, pad: int = 0):
+def lagrange_interp_kernel(order: int, delta: float, pad: int = 0) -> jax.Array:
+    '''
+    Fractional delay filter coefficients using Lagrange design method
+
+    :param order: order of interpolation
+    :param delta: fractional delay
+    :param pad: zero pad
+    :return: filter coefficients
+    '''
     kernel = jnp.ones(order + 1)
     for n in range(order + 1):
         for k in range(order + 1):
@@ -56,13 +74,28 @@ def lagrange_interp_kernel(order: int, delta: float, pad: int = 0):
         kernel = jnp.pad(kernel, (0, pad))
     return kernel
 
-def l_inf_optimal_kernel(order: int, delta: float, bw: float = 0.5):
+def l_inf_optimal_kernel(order: int, delta: float, bw: float = 0.5) -> jax.Array:
+    '''
+    Fractional delay filter coefficients from LUT (minimax method)
+
+    :param order: order of interpolation (0 to 10)
+    :param delta: fractional delay  (48/44.1 - 1 OR 44.1/48 - 1)
+    :param bw: bandwidth used for optimisation (0.5 OR 0.9)
+    :return: filter coefficients
+    '''
     delta = np.round(delta, 3)
     df = pd.read_csv(f'lookup_tables/L_inf_delta={delta}_bw={bw}.csv', header=None)
     return df.values[order-1, :order+1]
 
 
 def get_fir_interp_kernel(order: int, delta: float, method: str):
+    '''
+    Helper function to get fractional delay filter coefficients using Lagrange or Minmax
+    :param order: order of interpolation
+    :param delta: fractional delay
+    :param method: 'lagrange' or 'minimax' or 'naive'
+    :return: filter coefficients
+    '''
     if order == 0:
         return np.ones(1)
 
@@ -77,7 +110,16 @@ def get_fir_interp_kernel(order: int, delta: float, method: str):
         return
 
 
-def get_LSTM_fixed_point(lstm_params, cond_const=0.5, rand=True, method='empircal'):
+def get_LSTM_fixed_point(lstm_params: Dict, cond_const: float = 0.5, rand: bool = False, method: str = 'empircal') -> jax.Array:
+    '''
+    Finds the fixed point of an LSTM network
+
+    :param lstm_params: Dict containing lstm params
+    :param cond_const: conditioning parameter (constant) for models with conditioning input (2 channels)
+    :param rand: initialise states with random numbers (True) or zeros (False)
+    :param method: find fixed point empirically (method='empirical') as described in paper or analytically using newton-raphson (method='newton-raphson')
+    :return: the fixed point as a jax.numpy Array
+    '''
     hidden_size = lstm_params['cell']['hi']['bias'].shape[0]
     input_size = lstm_params['cell']['ii']['kernel'].shape[0]
     rnn = nn.RNN(LSTMCellOneState(hidden_size))
@@ -135,7 +177,15 @@ def get_LSTM_fixed_point(lstm_params, cond_const=0.5, rand=True, method='empirca
     return fixed_point
 
 
-def get_LSTM_jacobian(lstm_params, cond_const=0.5):
+def get_LSTM_jacobian(lstm_params: Dict, cond_const: float = 0.5, method: str = 'empircal') -> jax.Array:
+    '''
+    Get the Jacobian of an LSTM network linearised about a fixed point.
+
+    :param lstm_params: Dict containing lstm params
+    :param cond_const: conditioning parameter (constant) for models with conditioning input (2 channels)
+    :param method: method for finding the fixed point: find fixed point empirically (method='empirical') as described in paper or analytically using newton-raphson (method='newton-raphson')
+    :return:
+    '''
     hidden_size = lstm_params['cell']['hi']['bias'].shape[0]
     input_size = lstm_params['cell']['ii']['kernel'].shape[0]
     rnn = nn.RNN(nn.LSTMCell(hidden_size))
@@ -144,7 +194,7 @@ def get_LSTM_jacobian(lstm_params, cond_const=0.5):
     if input_size == 2:
         in_sig = jnp.concatenate((in_sig, cond_const * np.ones_like(in_sig)), axis=-1)
 
-    fixed_point = get_LSTM_fixed_point(lstm_params, cond_const=cond_const, rand=False)
+    fixed_point = get_LSTM_fixed_point(lstm_params, cond_const=cond_const, rand=False, method=method)
     @jit
     def forward_fn(current_state_vec):
         h, c = jnp.split(current_state_vec, 2, axis=-1)

@@ -7,7 +7,7 @@ from utils import model_info_from_json, get_fir_interp_kernel, audio_LSTM_params
 from rnn import AudioRNN, FIRInterpLSTMCell
 from scipy import signal
 #mpl.use('macosx')
-
+from argparse import ArgumentParser
 
 def polar_plot(a, ax, **kwargs):
     ax.scatter(np.real(a), np.imag(a), **kwargs)
@@ -20,25 +20,34 @@ def polar_plot(a, ax, **kwargs):
     ax.set_xticks([])
     ax.set_yticks([])
 
-# input settings ------
-model_filename = '../jax_rnn/Proteus_Tone_Packs/flattened/BlackstarHT40_AmpHighGain.json'
-interpolation_method = 'minimax'
+parser = ArgumentParser(description='Apply SRIRNN methods to a single LSTM model and view SNR results')
+parser.add_argument('-f', '--model_filename', type=str, default='Proteus_Tone_Packs/AmpPack1/BlackstarHT40_AmpHighGain.json',
+                    help='Path to the model file')
+parser.add_argument('-m', '--method', type=str, default='lagrange',
+                    help='interpolation method (lagrange or minimax)')
+parser.add_argument('--src_ratio', type=float, default=44.1 / 48,
+                    help='Sample rate conversion ratio')
+parser.add_argument('--cond_const', type=float, default=0.5,
+                    help="Conditioning constant for models with a 'knob' parameter")
+args = parser.parse_args()
+
+# other settings ------
 plot_poles = True
 plot_spec = True
 sr = 44100
 dur = 0.25
-os_ratio = 44.1/48
+
 
 
 # load LSTM and get jacbobian around fixed point ------
-model_info, state_dict = model_info_from_json(model_filename)
+model_info, state_dict = model_info_from_json(args.model_filename)
 params = audio_LSTM_params_from_state_dict(state_dict)
 J = get_LSTM_jacobian(params['rec'])
 
 # input signal --------
 in_sig = np.zeros((1, int(dur * sr), 1))
 if model_info['input_size'] == 2:
-    in_sig = np.concatenate((in_sig, 0.5 * np.ones_like(in_sig)), -1)
+    in_sig = np.concatenate((in_sig, args.cond_const * np.ones_like(in_sig)), -1)
 
 
 # set-up plotting ----------
@@ -49,9 +58,9 @@ if plot_spec:
     spec_fig, spec_ax = plt.subplots(2, 3, figsize=[20, 6])
 
 print('Model: ', model_info['name'])
-print('Interpolation:', interpolation_method)
+print('Interpolation:', args.method)
 for order in orders:
-    kernel = get_fir_interp_kernel(order=order, delta=os_ratio-1, method=interpolation_method)
+    kernel = get_fir_interp_kernel(order=order, delta=args.src_ratio-1, method=args.method)
 
     # state matrix of companion 1-step form
     A = np.concatenate((np.kron(kernel, J),
@@ -88,7 +97,7 @@ for order in orders:
         spec_ax[ax_idx].set_title(title)
 
 
-device_name = os.path.split(model_filename)[-1][:-5]
+device_name = os.path.split(args.model_filename)[-1][:-5]
 if plot_poles:
     poles_fig.subplots_adjust(hspace=0.3, wspace=0.0)
     poles_fig.suptitle(device_name)
