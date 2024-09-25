@@ -42,6 +42,11 @@ Alistair Carson, Alec Wright and Stefan Bilbao
 <p style="font-size: 1.0em; text-align: center">
 Welcome to the accompanying web-page for our ICASSP '25 submission.</p>
 <div style="text-align: center">
+    <a href="https://arxiv.org/abs/2409.15884" 
+        class="btn btn--primary btn--small"
+        target="_blank" rel="noopener noreferrer">
+    🗞️ Paper
+    </a>
     <a href="https://github.com/a-carson/icassp25_srirnns" 
         class="btn btn--primary btn--small"
         target="_blank" rel="noopener noreferrer">

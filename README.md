@@ -14,6 +14,10 @@ Welcome to the accompanying code for our ICASSP '25 submission.</p>
         class="btn btn--primary btn--small"
         target="_blank" rel="noopener noreferrer">
     🔊 Audio Examples
+    </a> &ensp; &ensp; &ensp; &ensp;  <a href="https://arxiv.org/abs/2409.15884" 
+        class="btn btn--primary btn--small"
+        target="_blank" rel="noopener noreferrer">
+      🗞️ Paper
     </a>
 </div>
 
